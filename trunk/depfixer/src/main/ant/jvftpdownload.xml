@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more contributor
+license agreements.  See the NOTICE.txt file distributed with this work for
+additional information regarding copyright ownership.  The ASF licenses this
+file to you under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License.  You may obtain a copy of
+the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<project name="jvftpdownload" default="all">
+
+  <target name="all">
+    <mkdir dir="${basedir}/target/jvftp"/>
+    <get src="http://downloads.sourceforge.net/project/jvftp/jvftp/0.73%20for%20java%201.5%2B/jvftp-bin-0_73.zip?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fjvftp%2F&amp;ts=1325111584&amp;use_mirror=iweb" ignoreerrors="true" dest="${basedir}/target/jvftp/jvftp-bin-0_73.zip"/>
+     <unzip src="${basedir}/target/jvftp/jvftp-bin-0_73.zip" dest="${basedir}/target/jvftp/jvftp-0_73"/>
+     <move file="${basedir}/target/jvftp/jvftp-0_73/jvftp/lib/jvftp.jar" tofile="${basedir}/target/jvftp/jvftp-0_73/jvftp/lib/jvftp-0.73.jar"/>
+     <exec dir="${basedir}/target/jvftp/jvftp-0_73/jvftp/lib" executable="mvn"
+	   output="${basedir}/target/jvftp-install.log">
+       <arg line="install:install-file"/>
+       <arg line="-Dfile=${basedir}/target/jvftp/jvftp-0_73/jvftp/lib/jvftp-0.73.jar"/>
+       <arg line="-DgroupId=jvftp"/>
+       <arg line="-DartifactId=jvftp"/>
+       <arg line="-Dversion=0.73"/>
+       <arg line="-Dpackaging=jar"/>  
+     </exec>
+
+  </target>
+
+</project>
