@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.oodt.cas.pushpull.protocol.ftp;
+package org.apacheextras.oodt.cas.pushpull.protocol.ftp;
 
 //JDK imports
 import java.io.File;

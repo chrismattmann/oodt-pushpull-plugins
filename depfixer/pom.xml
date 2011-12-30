@@ -20,7 +20,7 @@
   <artifactId>oodt-pushpull-plugins-depfixer</artifactId>
   <version>0.4-SNAPSHOT</version>
   <name>Apache CAS PushPull Plugins Dependency Fixer</name>
-  <groupId>org.apache.oodt</groupId>
+  <groupId>org.apacheextras.oodt</groupId>
   <packaging>pom</packaging>
   <build>
     <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
@@ -31,7 +31,7 @@
 	<version>1.6</version>
 	<executions>
 	  <execution>
-	    <id>fix-oodt-incubating-version</id>
+	    <id>jvftpdownload</id>
 	    <phase>validate</phase>
 	    <configuration>
 	      <target>
