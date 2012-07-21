@@ -31,63 +31,63 @@ import cz.dhl.io.LocalFile;
 import cz.dhl.ui.CoConsole;
 
 //OODT imports
-import org.apache.oodt.cas.pushpull.exceptions.ProtocolException;
-import org.apache.oodt.cas.pushpull.protocol.Protocol;
-import org.apache.oodt.cas.pushpull.protocol.ProtocolFile;
-import org.apache.oodt.cas.pushpull.protocol.ProtocolPath;
+import org.apache.oodt.cas.protocol.Protocol;
+import org.apache.oodt.cas.protocol.ProtocolFile;
+import org.apache.oodt.cas.protocol.auth.Authentication;
+import org.apache.oodt.cas.protocol.exceptions.ProtocolException;
+import org.apache.oodt.cas.protocol.util.ProtocolFileFilter;
 
 /**
  * 
  * @author bfoster
+ * @author mattmann
  * @version $Revision$
  * 
  * <p>
  * Describe your class here
  * </p>.
  */
-public class JvFtpClient extends Protocol {
+public class JvFtpClient implements Protocol {
 
     private Ftp ftp;
 
-    protected JvFtpClient() {
-        super("ftp");
+    public JvFtpClient() {
         ftp = new Ftp();
-        ftp.getContext().setConsole(null);/*new CoConsole(){
-          @Override
-	      public void print(String message){ 
-	      System.out.println(message);
-	  }
-	  });*/
+        ftp.getContext().setConsole(null);
     }
 
     @Override
-    public void abortCurFileTransfer() throws ProtocolException {
-        // do nothing
+    public void cd(ProtocolFile file) throws ProtocolException {
+        if (!ftp.cd(file.getPath()))
+            throw new ProtocolException("Failed to cd to " + file.getPath());
     }
 
-    @Override
-    protected void chDir(ProtocolPath path) throws ProtocolException {
-        if (!ftp.cd(path.getPathString()))
-            throw new ProtocolException("Failed to cd to " + path);
+    public void put(File fromFile, ProtocolFile toFile) throws ProtocolException{
+	throw new ProtocolException("Not implemented yet.");
     }
 
-    public void cdToRoot() throws ProtocolException {
+    public void cdRoot() throws ProtocolException {
         try {
-            chDir(new ProtocolPath("/", true));
+            cd(new ProtocolFile("/", true));
         } catch (Exception e) {
             throw new ProtocolException("Failed to cd to root : "
                     + e.getMessage());
         }
     }
 
+    public void cdHome() throws ProtocolException {
+	cd(new ProtocolFile("/", true));
+    }
+
+
     @Override
-    protected void connect(String host, String username, String password)
+    public void connect(String host, Authentication auth) 
             throws ProtocolException {
         try {
             if (ftp.connect(host, 21)) {
-                if (!ftp.login(username, password)) {
+                if (!ftp.login(auth.getUser(), auth.getPass())){
                     throw new ProtocolException("Failed to login as user "
-                            + username);
+						+ auth.getUser());
                 }
             } else {
                 throw new ProtocolException("Failed to connect at port 21");
@@ -99,15 +99,15 @@ public class JvFtpClient extends Protocol {
     }
 
     @Override
-    public void disconnectFromServer() throws ProtocolException {
+    public void close() throws ProtocolException {
         ftp.disconnect();
     }
 
     @Override
-    protected ProtocolFile getCurrentWorkingDir() throws ProtocolException {
+    public ProtocolFile pwd() throws ProtocolException {
         try {
-            return new ProtocolFile(this.getRemoteSite(), new ProtocolPath(ftp
-                    .pwd(), true));
+            return new ProtocolFile(ftp
+				    .pwd(), true);
         } catch (Exception e) {
             throw new ProtocolException(
                     "Failed to get current working directory : "
@@ -116,11 +116,10 @@ public class JvFtpClient extends Protocol {
     }
 
     @Override
-    public void getFile(ProtocolFile file, File toLocalFile)
+    public void get(ProtocolFile file, File toLocalFile)
             throws ProtocolException {
         try {
-            CoFile downloadFile = new FtpFile(file.getProtocolPath()
-                    .getPathString(), ftp);
+            CoFile downloadFile = new FtpFile(file.getPath(), ftp);
             CoFile to = new LocalFile(toLocalFile.getParentFile()
                     .getAbsolutePath(), toLocalFile.getName());
             if (!CoLoad.copy(to, downloadFile))
@@ -132,20 +131,19 @@ public class JvFtpClient extends Protocol {
     }
 
     @Override
-    public boolean isConnected() throws ProtocolException {
+    public boolean connected(){
         return ftp.isConnected();
     }
 
     @Override
-    public List<ProtocolFile> listFiles() throws ProtocolException {
+    public List<ProtocolFile> ls() throws ProtocolException {
         LinkedList<ProtocolFile> returnList = new LinkedList<ProtocolFile>();
         try {
             CoFile dir = new FtpFile(ftp.pwd(), ftp);
             CoFile fls[] = dir.listCoFiles();
             for (CoFile file : fls) {
-                returnList.add(new ProtocolFile(this.getRemoteSite(),
-                        new ProtocolPath(file.getAbsolutePath(), file
-                                .isDirectory())));
+                returnList.add(new ProtocolFile(file.getAbsolutePath(), file
+						.isDirectory()));
             }
             return returnList;
         } catch (Exception e) {
@@ -154,11 +152,32 @@ public class JvFtpClient extends Protocol {
     }
 
     @Override
-    protected boolean deleteFile(ProtocolFile file) {
+    public List<ProtocolFile> ls(ProtocolFileFilter filter) throws ProtocolException {
+        LinkedList<ProtocolFile> returnList = new LinkedList<ProtocolFile>();
         try {
-            return ftp.rm(file.getProtocolPath().getPathString());
+            CoFile dir = new FtpFile(ftp.pwd(), ftp);
+            CoFile fls[] = dir.listCoFiles();
+            for (CoFile file : fls) {
+                ProtocolFile pFile = new ProtocolFile(file.getAbsolutePath(), file
+						      .isDirectory());
+                if(filter.accept(pFile)){
+		    returnList.add(pFile);
+		}
+            }
+            return returnList;
         } catch (Exception e) {
-            return false;
+            throw new ProtocolException("Failed to ls : " + e.getMessage());
+        }
+
+
+    }
+
+    @Override
+    public void delete(ProtocolFile file) throws ProtocolException{
+        try {
+            ftp.rm(file.getPath());
+        } catch (Exception e) {
+            throw new ProtocolException(e.getMessage());
         }
     }
 
