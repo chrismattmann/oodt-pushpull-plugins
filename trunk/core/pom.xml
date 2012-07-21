@@ -22,7 +22,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>oodt-pushpull-plugins-core</artifactId>
   <groupId>org.apacheextras.oodt</groupId>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.4</version>
   <name>CAS Push-Pull-Framework Plugins Core Libs</name>
   <build>
     <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
