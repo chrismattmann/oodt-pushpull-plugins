@@ -18,8 +18,8 @@
 package org.apacheextras.oodt.cas.pushpull.protocol.ftp;
 
 //OODT imports
-import org.apache.oodt.cas.pushpull.protocol.Protocol;
-import org.apache.oodt.cas.pushpull.protocol.ProtocolFactory;
+import org.apache.oodt.cas.protocol.Protocol;
+import org.apache.oodt.cas.protocol.ProtocolFactory;
 
 /**
  * 
@@ -35,5 +35,9 @@ public class JvFtpClientFactory implements ProtocolFactory {
     public Protocol newInstance() {
         return new JvFtpClient();
     }
-
+   
+    @Override
+    public String getSchema(){
+	return "ftp";
+    }
 }
