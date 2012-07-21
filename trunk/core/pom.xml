@@ -75,7 +75,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.oodt</groupId>
-      <artifactId>cas-pushpull</artifactId>
+      <artifactId>cas-protocol-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
