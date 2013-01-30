@@ -19,7 +19,7 @@ the License.
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apacheextras.oodt</groupId>
     <artifactId>oodt-pushpull-plugins</artifactId>
-    <version>0.4</version>
+    <version>0.6-SNAPSHOT</version>
     <name>Apache OODT CAS PushPull Plugins</name>
     <packaging>pom</packaging>
     <description>
