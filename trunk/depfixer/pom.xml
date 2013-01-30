@@ -18,7 +18,7 @@
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>oodt-pushpull-plugins-depfixer</artifactId>
-  <version>0.4</version>
+  <version>0.6-SNAPSHOT</version>
   <name>Apache CAS PushPull Plugins Dependency Fixer</name>
   <groupId>org.apacheextras.oodt</groupId>
   <packaging>pom</packaging>
